@@ -89,22 +89,27 @@ This minimal reproduction proves that:
 
 ## Next Steps
 
-### Immediate Testing Priorities
+### ~~Testing Phase~~ ✅ Complete (2025-11-03)
 
-1. **Test OSC133 sequences**: Does `npm run start:osc133` reduce flickering?
-2. **Test different terminals**: Which terminals handle it better?
-3. **Test bcherny's Ink fork**: Does the fork have improvements?
-4. **Profile rendering**: Capture detailed metrics on redraw behavior
+All immediate testing has been completed:
+1. ✅ **Tested OSC133 sequences** - Inconclusive on GNOME (no support), but fork with OSC133 fails
+2. ✅ **Tested bcherny's Ink fork** - Does NOT fix flickering
+3. ✅ **Tested different Ink versions** - v3.2.0, v4.0.0, v4.4.1 all flicker
+4. ✅ **Profiled rendering** - Confirmed full component redraws (`[2K[1A` pattern)
 
-### Potential Fixes to Explore
+**Result**: No tested fix resolves the issue. Flickering is fundamental to Ink's architecture.
 
-Based on the research into the issue:
+### Source Investigation Phase ⏳ Starting
 
-1. **OSC 133 Prompt Marking** - Already implemented in `with-osc133.js`
-2. **Ink Rendering Optimization** - Test bcherny/ink fork
-3. **Selective Component Updates** - Only re-render changed components
-4. **Alternate Screen Buffer** - Use terminal alternate screen
-5. **Update Throttling** - Reduce update frequency (tradeoff with smoothness)
+Since no existing fix works, we're investigating Ink's source code:
+
+1. **Analyze Ink rendering engine** - Study how React reconciliation maps to terminal output
+2. **Identify full redraw triggers** - Understand why every state change redraws everything
+3. **Prototype selective updates** - Attempt to implement targeted rendering
+4. **Test and validate** - Ensure fix works in tmux + all terminals
+5. **Consider contribution** - Fork or contribute back to Ink if successful
+
+See [FINDINGS.md](./FINDINGS.md) for detailed investigation plan and test results.
 
 ### Documentation Tasks
 

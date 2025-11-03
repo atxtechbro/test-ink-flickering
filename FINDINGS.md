@@ -316,3 +316,72 @@ Research and test alternatives:
 - react-blessed (React + Blessed)
 - tui-rs (Rust-based, if Claude Code can use it)
 - Custom rendering solution
+
+---
+
+## Decision: Pursue Ink Source Code Investigation
+
+**Date**: November 3, 2025
+
+After exhaustive testing that ruled out all commonly suggested fixes, we've decided to pursue **Option 2: Deep Dive into Ink Source**.
+
+### Why This Path?
+
+1. **Universal Solution Required**: The use case requires a fix that works in tmux + all terminals. OSC133 and terminal-specific features won't help.
+
+2. **All Quick Fixes Failed**:
+   - ❌ OSC133 sequences (inconclusive, but fork with OSC133 fails)
+   - ❌ bcherny's Ink fork (mentioned in issue, doesn't work)
+   - ❌ Different Ink versions (v3.x, v4.x, v5.x all flicker)
+   - ❌ No configuration or workaround available
+
+3. **Root Cause is Clear**: Full component tree redraws on every state change. This is fixable at the source.
+
+4. **Only Path Left**: We've tested everything else. The only way forward is to fix Ink's rendering engine or accept the limitation.
+
+### Investigation Plan
+
+**Phase 1: Analysis** (Next)
+1. Clone Ink repository
+2. Study rendering architecture (`src/render.ts`, reconciler)
+3. Identify where full redraws are triggered
+4. Understand React reconciliation in terminal context
+5. Map out rendering flow on state changes
+
+**Phase 2: Experimentation**
+1. Prototype selective update mechanism
+2. Test if terminal can handle partial redraws
+3. Benchmark performance impact
+4. Validate in tmux + multiple terminals
+
+**Phase 3: Implementation**
+1. Implement proper selective updates
+2. Maintain Ink API compatibility
+3. Comprehensive testing
+4. Consider contributing back to Ink or maintaining fork
+
+### Success Criteria
+
+✅ **Success**: Status line updates without full screen redraw
+✅ **Success**: Works in tmux + GNOME Terminal + others
+✅ **Success**: No visual flickering
+❌ **Failure**: Architectural limitations prevent selective updates
+❌ **Failure**: Solution breaks Ink's React model
+
+### Timeline Expectations
+
+- **Analysis**: Days to weeks (understand codebase)
+- **Experimentation**: Days (prototype fixes)
+- **Implementation**: Weeks (if feasible)
+- **Alternative**: If impossible, document why and recommend Option 1 or 4
+
+### Commitment
+
+This investigation is specifically motivated by the tmux + frequent update use case. If successful, this could benefit:
+- Claude Code users
+- All Ink applications with frequently updating status indicators
+- The broader terminal UI community
+
+---
+
+**Status**: ✅ Testing complete → ⏳ Source investigation starting
