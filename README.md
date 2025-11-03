@@ -6,13 +6,28 @@ This project is a minimal reproduction case for the screen flickering issue repo
 
 When Claude Code processes requests, the entire terminal buffer redraws with each status update instead of just refreshing the indicator line, causing screen flickering that can be problematic for users sensitive to flashing lights.
 
-## Status
+## Project Status
 
-- ✅ **Reproduction Confirmed** (2025-11-03) - Successfully reproduced the flickering
-- ⏳ **OSC133 Testing** - Tested on GNOME Terminal (inconclusive - no OSC133 support)
-- ⏳ **Fix Testing** - Testing potential solutions in progress
+### Phase 1: Reproduction ✅ Complete
+- Successfully reproduced Ink flickering with minimal test case
+- Confirmed issue matches Claude Code behavior
+- Established baseline for testing fixes
 
-📋 **See [FINDINGS.md](./FINDINGS.md) for detailed test results**
+### Phase 2: Fix Testing ✅ Complete - **No Fixes Work**
+Exhaustively tested all commonly suggested fixes:
+- ❌ OSC133 sequences (inconclusive on GNOME, but fork with OSC133 fails)
+- ❌ bcherny's Ink fork v5.0.24 (doesn't fix it)
+- ❌ Ink 3.2.0 (still flickers)
+- ❌ Ink 4.0.0 (still flickers)
+- ❌ Ink 4.4.1 (still flickers)
+
+**Conclusion**: Flickering is fundamental to Ink's rendering architecture across all versions.
+
+### Phase 3: Source Code Investigation ⏳ Next
+We've decided to investigate Ink's rendering engine to implement selective updates.
+This is the only path forward for a universal fix that works in tmux.
+
+📋 **See [FINDINGS.md](./FINDINGS.md) for detailed test results and investigation plan**
 
 ## What This Does
 
@@ -72,11 +87,21 @@ Test this on different terminals to compare behavior:
 
 ## Next Steps
 
+### Testing Phase ✅ Complete
 1. ✅ ~~Confirm flickering reproduces in this minimal app~~
 2. ✅ ~~Compare with Claude Code's behavior~~
-3. ⏳ Test with OSC133 on compatible terminal (Kitty, Windows Terminal, VS Code)
-4. ⏳ Try bcherny's Ink fork
-5. ⏳ Profile rendering to understand the issue
+3. ✅ ~~Test OSC133 sequences~~ (inconclusive, but fork with OSC133 fails)
+4. ✅ ~~Try bcherny's Ink fork~~ (doesn't fix it)
+5. ✅ ~~Test different Ink versions~~ (v3.x, v4.x, v5.x all flicker)
+
+### Source Investigation Phase ⏳ Starting
+1. Clone and analyze Ink source code
+2. Study rendering engine architecture
+3. Identify root cause of full redraws
+4. Prototype selective update mechanism
+5. Implement fix if feasible
+
+See [FINDINGS.md](./FINDINGS.md) for detailed investigation plan.
 
 ## Documentation
 
